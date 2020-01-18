@@ -34,4 +34,6 @@
 
 - 持仓和个股仓位占比，会自动记录到"Latest_combination_ratio.xlsx"文件中。
 
+- "Reference_codes.xlsx" 存放作为对比的指数代码
+
 - 文件总结：英文名的xlsx文件会被程序自动写入或读取；中文名的xlsx文件仅用于手动辅助记录。
