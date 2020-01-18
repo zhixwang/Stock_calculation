@@ -14,7 +14,7 @@
 
     python update_simplified_combination.py (-chk 0.89 -cus 7.01)
 
-说明： -chk 人民币港币汇率； -cus 人民币美元汇率；
+说明： -chk 人民币港币汇率； -cus 人民币美元汇率；如果当日汇率无需更新，括号里的内容可以省掉。
 
 相应汇率会自动更新到表格"Currency.xlsx"里。
 
@@ -31,3 +31,7 @@
 > compare_history_performance.py
 
 ，会自动生成跟以上三个指数对比的组合净值曲线图。
+
+- 持仓和个股仓位占比，会自动记录到"Latest_combination_ratio.xlsx"文件中。
+
+- 文件总结：英文名的xlsx文件会被程序自动写入或读取；中文名的xlsx文件仅用于手动辅助记录。
