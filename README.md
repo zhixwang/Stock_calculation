@@ -27,5 +27,7 @@
     净值 = 总市值(来自"Real_combination_info.xlsx")/总份额("Fund_shares.xlsx")
 
 - 每次运行完Python程序，会自动把最新净值和市值记录在"Simple_Auto_combination_date_info.xlsx"里，作为对比，每日的中证500、沪深300和创业板指会记录在"Reference_date_value.xlsx"里。想考察自己的组合净值变化曲线时，可以运行
+
 > compare_history_performance.py
+
 ，会自动生成跟以上三个指数对比的组合净值曲线图。
