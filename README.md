@@ -3,9 +3,10 @@
 
 环境：Python 3.6；
 
-需要安装 tushare
+需要安装 tushare 和 pandas-datareader
 
     pip install tushare
+    pip install pandas-datareader
 
 ## 使用方法
 
