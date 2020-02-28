@@ -8,6 +8,9 @@ Created on Sat Sep 15 14:14:18 2018
 from invest_combination_simplified import auto_combination as acb
 import argparse
 import pandas as pd
+import re
+import json
+import urllib.request
 
 ap = argparse.ArgumentParser(description='Update values')
 ap.add_argument("-chk", "--currency_hk", required=False,type = float,
@@ -22,23 +25,44 @@ curr_hk = currency_pd['price'][0]
 curr_us = currency_pd['price'][1]
 
 if args['currency_hk'] or args['currency_us'] :
+    #Update currency ratio manually
     if args['currency_hk']:
         curr_hk = args['currency_hk']
     if args['currency_us'] :
-        curr_us = args['currency_us']
-	#Update currency ratio
-    curr_file = u"Currency.xlsx"
-    #dic_curr = {'type':'out', 'price':curr_hk}
-    #df_curr = pd.DataFrame(dic_curr,index = [0])
+        curr_us = args['currency_us']	
+    HKDCNY = float(curr_hk)
+    USDCNY = float(curr_us)    
     
-    currency_pd['price'][0] = curr_hk
-    currency_pd['price'][1] = curr_us
-
-    currency_pd.to_excel(curr_file)
-    print(u'Currency updated')
-
+else:
+    # No manual input, by default get currency from Hexun
+    usdurl = "http://webforex.hermes.hexun.com/forex/quotelist?code=FOREXUSDCNY&column=Code,Price"
+    hkdurl = "http://webforex.hermes.hexun.com/forex/quotelist?code=FOREXHKDCNY&column=Code,Price"
+    urdreq = urllib.request.Request(usdurl)
+    hkdreq = urllib.request.Request(hkdurl)
+    f = urllib.request.urlopen(urdreq)
+    html = f.read().decode("utf-8")
+    s = re.findall("{.*}",str(html))[0]
+    sjson = json.loads(s)    
+    USDCNY = sjson["Data"][0][0][1]/10000
+    print("USD to CNY: %.4f " % USDCNY)
     
-curr = (float(curr_hk), float(curr_us))
+    f = urllib.request.urlopen(hkdreq)
+    html = f.read().decode("utf-8")
+    s = re.findall("{.*}",str(html))[0]
+    sjson = json.loads(s)    
+    HKDCNY = sjson["Data"][0][0][1]/10000
+    print("HKD to CNY: %.4f " % HKDCNY)
+    curr_hk = str(HKDCNY)
+    curr_us = str(USDCNY)
+    
+currency_pd['price'][0] = curr_hk
+currency_pd['price'][1] = curr_us    
+curr_file = u"Currency.xlsx"
+
+currency_pd.to_excel(curr_file)
+print(u'Currency updated')
+    
+curr = (HKDCNY, USDCNY)
 cb2 = acb(curr)
 cb2.save()
 """
