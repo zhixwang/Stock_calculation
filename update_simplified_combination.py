@@ -59,7 +59,7 @@ currency_pd['price'][0] = curr_hk
 currency_pd['price'][1] = curr_us    
 curr_file = u"Currency.xlsx"
 
-currency_pd.to_excel(curr_file)
+currency_pd.to_excel(curr_file, index=False)
 print(u'Currency updated')
     
 curr = (HKDCNY, USDCNY)

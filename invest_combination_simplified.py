@@ -220,7 +220,7 @@ class auto_combination:
             day_all = df_day
         else:
             day_all = day_in.append(df_day, ignore_index=True)#,sort=False)
-        day_all.to_excel(self.daily_file)
+        day_all.to_excel(self.daily_file, index=False)
         print(u'总市值:')
         print(self.value)
         print(u"净值:")
@@ -232,6 +232,6 @@ class auto_combination:
         df = pd.DataFrame.from_dict(dic)
         df = df.sort_values('ratio',ascending = False)
         print(df)
-        df.to_excel(default['date_file'] + '.xlsx')
-        self.ref_data.to_excel(self.ref_data_file)
+        df.to_excel(default['date_file'] + '.xlsx', index=False)
+        self.ref_data.to_excel(self.ref_data_file, index=False)
 
