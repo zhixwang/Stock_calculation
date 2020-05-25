@@ -13,6 +13,7 @@ from datetime import timedelta
 from pytz import timezone 
 import tushare as ts 
 import pandas_datareader.data as web  
+# import urllib
 
 class auto_combination:
     nums = np.array([])                 #number of each stock that you holds
@@ -124,8 +125,17 @@ class auto_combination:
             tmp_0 = tmp_data.loc[tmp_data['date']==ini_date]['close'].tolist()[0]
             tmp_df[ref_info['ref_labels'].iloc[i]] = tmp_close/tmp_0*comb_value_0
         self.ref_data = pd.concat([ref_data,tmp_df])
-
-
+        
+    def is_A_stock(self, s_code):
+        # Check if a stock code means a stock in Chinese A market or not
+        if len(s_code) != 6:
+            # Check length first
+            return False
+        last_c =  s_code[-1]
+        # Check also the last digit
+        if last_c >= '0' and last_c <= '9':
+            return True
+        return False
                     
 
     def update_combi_data(self):
@@ -185,18 +195,35 @@ class auto_combination:
             if tmp == 0:
                 # this is the item of Cash
                 return 1.0
-        if len(s_code) != 6:
-            # HK or US stocks
-            pdate = date.today() - timedelta(10)
-            pdatet = pdate.strftime('%Y-%m-%d')
-            data_Df=web.get_data_yahoo(s_code,pdatet,self.date)
-            if s_code[-3:] == ".hk":
-                # HK Stock
-                currency = self.currency_hk
-            else:
-                # US Stock
-                currency = self.currency_us
-            price = data_Df['Close'].iloc[-1]*currency
+        
+        if not self.is_A_stock(s_code):
+            try:
+                # HK or US stocks
+                pdate = date.today() - timedelta(10)
+                pdatet = pdate.strftime('%Y-%m-%d')
+                data_Df=web.get_data_yahoo(s_code,pdatet,self.date)
+                if s_code[-3:] == ".hk":
+                    # HK Stock
+                    currency = self.currency_hk
+                else:
+                    # US Stock
+                    currency = self.currency_us
+                price = data_Df['Close'].iloc[-1]*currency
+            except:
+                # Stock code not founded in Yahoo, such as HK Options
+                # Manually input the price in "Stock_price_manual_input.xlsx" ==> not optimal!
+                manual_df = pd.read_excel(r"Stock_price_manual_input.xlsx")
+                # Correct the format of the table
+                for i in range(len(manual_df)):
+                    manual_df['code'].iloc[i] = manual_df['code'].iloc[i].lower()
+                selected_stock = manual_df.loc[manual_df['code'] == s_code.lower()]
+                price_value = selected_stock['price'].iloc[0]
+                if s_code[-2:].lower() == r"hk":
+                    currency = self.currency_hk
+                else:
+                    currency = self.currency_us
+                price = price_value*currency
+                
         else:
             # A股
             df = ts.get_k_data(s_code)
