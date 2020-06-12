@@ -45,9 +45,12 @@ class auto_combination:
     ref_data = None
     ref_data_file = r'Reference_date_value.xlsx'
     daily_file = r'Simple_Auto_combination_date_info.xlsx'
+    write_to_file = True
 
 
-    def __init__(self,curr_input):
+    def __init__(self,curr_input,write_file):
+        self.write_to_file = write_file
+        print(self.write_to_file)
         self.get_date()
         self.init = self.read_initial()
         # curr_input = (curr_hk, curr_us)
@@ -231,6 +234,7 @@ class auto_combination:
         return price
     
     def save(self, **kwargs):
+        print(self.write_to_file)
         default = {'daily_file': 'Simple_Auto_combination_date_info',\
                    'date_file': 'Latest_combination_ratio'}
         for item in default:
@@ -247,7 +251,8 @@ class auto_combination:
             day_all = df_day
         else:
             day_all = day_in.append(df_day, ignore_index=True)#,sort=False)
-        day_all.to_excel(self.daily_file, index=False)
+        if self.write_to_file == True:
+            day_all.to_excel(self.daily_file, index=False)
         print(u'总市值:')
         print(self.value)
         print(u"净值:")
@@ -259,6 +264,7 @@ class auto_combination:
         df = pd.DataFrame.from_dict(dic)
         df = df.sort_values('ratio',ascending = False)
         print(df)
-        df.to_excel(default['date_file'] + '.xlsx', index=False)
-        self.ref_data.to_excel(self.ref_data_file, index=False)
+        if self.write_to_file == True:
+            df.to_excel(default['date_file'] + '.xlsx', index=False)
+            self.ref_data.to_excel(self.ref_data_file, index=False)
 

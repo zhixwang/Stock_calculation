@@ -13,9 +13,9 @@
 - 手动在 "Real_combination_info.xlsx" 记录持仓信息，并且在每次调仓时更新。每天运行Python程序时，会自动从这个文件里读取数据，计算净值。
 - 每日更新净值：
 
-    python update_simplified_combination.py (-chk 0.89 -cus 7.01)
+    python update_simplified_combination.py (-chk 0.89 -cus 7.01 -w True)
 
-说明： -chk 人民币港币汇率； -cus 人民币美元汇率；若不输入任何参数，则会自动从和讯网查询实时美元和港币汇率并参与计算。基础货币为人民币。
+说明： -chk 人民币港币汇率； -cus 人民币美元汇率；若不输入任何参数，则会自动从和讯网查询实时美元和港币汇率并参与计算。基础货币为人民币；-w 是否将这次更新的结果写入本地记录文件，默认是True。
 
 相应汇率会自动更新到表格"Currency.xlsx"里。
 

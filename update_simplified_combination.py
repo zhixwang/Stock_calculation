@@ -17,6 +17,7 @@ ap.add_argument("-chk", "--currency_hk", required=False,type = float,
 	help="Currency")
 ap.add_argument("-cus", "--currency_us", required=False,type = float,
 	help="Currency")
+ap.add_argument("-w", "--write",required = False, type = str, help = "Write to file")
 args = vars(ap.parse_args())
 
 curr_file = u"Currency.xlsx"
@@ -24,6 +25,17 @@ currency_pd = pd.read_excel(curr_file,dtype = str)
 curr_hk = currency_pd['price'][0]
 curr_us = currency_pd['price'][1]
 
+write_file = True
+if args['write']:
+    try:
+        bool_write = json.loads(args['write'].lower())    
+    except:
+        pass
+    else:
+        if bool_write == False:
+            write_file = False
+            print("Output to files cancelled!")
+    
 if args['currency_hk'] or args['currency_us'] :
     #Update currency ratio manually
     if args['currency_hk']:
@@ -63,7 +75,7 @@ currency_pd.to_excel(curr_file, index=False)
 print(u'Currency updated')
     
 curr = (HKDCNY, USDCNY)
-cb2 = acb(curr)
+cb2 = acb(curr,write_file)
 cb2.save()
 """
 #cb1.show()
