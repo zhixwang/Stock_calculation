@@ -34,7 +34,7 @@ if args['write']:
     else:
         if bool_write == False:
             write_file = False
-            print("Output to files cancelled!")
+            # print("Output to files cancelled!")
     
 if args['currency_hk'] or args['currency_us'] :
     #Update currency ratio manually

@@ -40,6 +40,7 @@ class auto_update_profolio:
 
     def __init__(self,curr_input,write_file):
         self.write_to_file = write_file
+        print("Write to files:")
         print(self.write_to_file)
         self.get_date()
         self.init = self.read_initial()
@@ -132,7 +133,7 @@ class auto_update_profolio:
         
     def read_comb_info(self,*filename):
         if len(filename) == 0:
-            file = pfiles.Profolio_component_ratio
+            file = pfiles.Profolio_component_info
         else:
             file = filename
         comb_info = pd.read_excel(file,dtype = str)
