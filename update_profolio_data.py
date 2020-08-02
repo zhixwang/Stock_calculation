@@ -25,7 +25,7 @@ currency_pd = pd.read_excel(curr_file,dtype = str)
 curr_hk = currency_pd['price'][0]
 curr_us = currency_pd['price'][1]
 
-write_file = True
+write_file = False
 if args['write']:
     try:
         bool_write = json.loads(args['write'].lower())    

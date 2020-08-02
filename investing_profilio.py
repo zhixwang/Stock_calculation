@@ -40,8 +40,8 @@ class auto_update_profolio:
 
     def __init__(self,curr_input,write_file):
         self.write_to_file = write_file
-        print("Write to files:")
-        print(self.write_to_file)
+        print("Write to files: %r " % self.write_to_file)
+        # print(self.write_to_file)
         self.get_date()
         self.init = self.read_initial()
             
@@ -176,8 +176,16 @@ class auto_update_profolio:
                 manual_df = pd.read_excel(pfiles.Manual_input_price)
                 # Correct the format of the table
                 for i in range(len(manual_df)):
-                    manual_df.loc[i,'code'] = manual_df['code'].iloc[i].lower()
-                selected_stock = manual_df.loc[manual_df['code'] == s_code.lower()]
+                    try:
+                        # Correct code name for US stocks
+                        manual_df.loc[i,'code'] = manual_df['code'].iloc[i].lower()
+                    except:
+                        pass
+                try:
+                    s_code = s_code.lower()
+                except:
+                    pass
+                selected_stock = manual_df.loc[manual_df['code'] == s_code]
                 price_value = selected_stock['price'].iloc[0]
                 if s_code[-2:].lower() == r"hk":
                     currency = self.currency_hk
@@ -186,32 +194,53 @@ class auto_update_profolio:
                 price = price_value*currency
                 
         else:
-            # A股
-            df = ts.get_k_data(s_code)
-            price = df.iloc[-1]['close']    # price of the latest closing trading day, numpy.float
-            """
-            # For the new Tushare API-pro, which doesn't work for the convertible bonds
-            end_date = self.date.replace('-','')    # set end date for query
-            start_date = date.today() - timedelta(days=10)    # set start date for query
-            start_date = str(start_date).replace('-','')    # change start date to text 
-            # Re-format the stock code for new Tushare API
-            if s_code[0] == '6':
-                # Shanghai Market
-                s_code = s_code + r".SH"
-            elif s_code[0] == '0':
-                # Shenzhen Market
-                s_code = s_code + r".SZ"
-            else:
-                print("Unknown market for A stock: " + s_code)
-                return 0.0
-            df = self.tspro.daily(ts_code=s_code, start_date = start_date, end_date=end_date)
-            #df = ts.get_k_data(s_code)
-            price = df.iloc[-1]['close']    # price of the latest closing trading day, numpy.float
-            """
+            try:
+                # A股
+                df = ts.get_k_data(s_code)
+                price = df.iloc[-1]['close']    # price of the latest closing trading day, numpy.float
+                """
+                # For the new Tushare API-pro, which doesn't work for the convertible bonds
+                end_date = self.date.replace('-','')    # set end date for query
+                start_date = date.today() - timedelta(days=10)    # set start date for query
+                start_date = str(start_date).replace('-','')    # change start date to text 
+                # Re-format the stock code for new Tushare API
+                if s_code[0] == '6':
+                    # Shanghai Market
+                    s_code = s_code + r".SH"
+                elif s_code[0] == '0':
+                    # Shenzhen Market
+                    s_code = s_code + r".SZ"
+                else:
+                    print("Unknown market for A stock: " + s_code)
+                    return 0.0
+                df = self.tspro.daily(ts_code=s_code, start_date = start_date, end_date=end_date)
+                #df = ts.get_k_data(s_code)
+                price = df.iloc[-1]['close']    # price of the latest closing trading day, numpy.float
+                """
+            except:
+                # Manually input the price in "Stock_price_manual_input.xlsx" ==> not optimal!
+                manual_df = pd.read_excel(pfiles.Manual_input_price)
+                # Correct the format of the table
+                for i in range(len(manual_df)):
+                    if isinstance(manual_df.loc[i,'code'], int):
+                        # For A-share stock: int to string
+                        manual_df.loc[i,'code'] = str(manual_df.loc[i,'code'])
+                    try:
+                        # Correct code name for US stocks
+                        manual_df.loc[i,'code'] = manual_df['code'].iloc[i].lower()
+                    except:
+                        pass
+                try:
+                    s_code = s_code.lower()
+                except:
+                    pass
+                selected_stock = manual_df.loc[manual_df['code'] == s_code]
+                price_value = selected_stock['price'].iloc[0]
+                price = price_value
         return price
     
     def save(self, **kwargs):
-        print(self.write_to_file)
+        # print(self.write_to_file)
         default = {'daily_file': pfiles.Profolio_net_value,\
                    'date_file': pfiles.Profolio_component_ratio}
         for item in default:
