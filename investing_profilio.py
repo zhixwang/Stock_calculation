@@ -222,14 +222,16 @@ class auto_update_profolio:
                 manual_df = pd.read_excel(pfiles.Manual_input_price)
                 # Correct the format of the table
                 for i in range(len(manual_df)):
-                    if isinstance(manual_df.loc[i,'code'], int):
-                        # For A-share stock: int to string
-                        manual_df.loc[i,'code'] = str(manual_df.loc[i,'code'])
-                    try:
-                        # Correct code name for US stocks
-                        manual_df.loc[i,'code'] = manual_df['code'].iloc[i].lower()
-                    except:
-                        pass
+                    manual_df.loc[i,'code'] = str(manual_df.loc[i,'code'])
+                # for i in range(len(manual_df)):
+                #     if isinstance(manual_df.loc[i,'code'], int):
+                #         # For A-share stock: int to string
+                #         manual_df.loc[i,'code'] = str(manual_df.loc[i,'code'])
+                #     try:
+                #         # Correct code name for US stocks
+                #         manual_df.loc[i,'code'] = manual_df['code'].iloc[i].lower()
+                #     except:
+                #         pass
                 try:
                     s_code = s_code.lower()
                 except:
