@@ -25,7 +25,7 @@ currency_pd = pd.read_excel(curr_file,dtype = str)
 curr_hk = currency_pd['price'][0]
 curr_us = currency_pd['price'][1]
 
-write_file = False
+write_file = True
 if args['write']:
     try:
         bool_write = json.loads(args['write'].lower())    
@@ -49,8 +49,9 @@ else:
     # No manual input, by default get currency from Hexun
     usdurl = "http://webforex.hermes.hexun.com/forex/quotelist?code=FOREXUSDCNY&column=Code,Price"
     hkdurl = "http://webforex.hermes.hexun.com/forex/quotelist?code=FOREXHKDCNY&column=Code,Price"
-    urdreq = urllib.request.Request(usdurl)
-    hkdreq = urllib.request.Request(hkdurl)
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'}
+    urdreq = urllib.request.Request(usdurl, headers=headers)
+    hkdreq = urllib.request.Request(hkdurl, headers=headers)
     f = urllib.request.urlopen(urdreq)
     html = f.read().decode("utf-8")
     s = re.findall("{.*}",str(html))[0]
