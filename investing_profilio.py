@@ -100,10 +100,14 @@ class auto_update_profolio:
         n = len(ref_info['ref_labels'])
         tmp_df = pd.DataFrame({"Date":[self.date]})
         for i in range(n):
+            # Go through every reference index
             s_code = ref_info['ref_code'].iloc[i]
             tmp_data = ts.get_k_data(s_code)
             tmp_close = tmp_data.iloc[-1]['close']
-            tmp_0 = tmp_data.loc[tmp_data['date']==ini_date]['close'].tolist()[0]
+            try:
+                tmp_0 = tmp_data.loc[tmp_data['date']==ini_date]['close'].tolist()[0]
+            except IndexError:
+                tmp_0 = float(ref_info['Initial_value'].iloc[i])
             tmp_df[ref_info['ref_labels'].iloc[i]] = tmp_close/tmp_0*comb_value_0
         self.ref_data = pd.concat([ref_data,tmp_df])
         
